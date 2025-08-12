@@ -7,7 +7,7 @@
   "scripts": {
     "build": "babel src --out-dir dist",
     "start": "node src/index.js",
-    "test": "jest",
+    "test": "NODE_ENV=test jest",
     "coverage": "jest --coverage"
   },
   "jest": {
