@@ -1,0 +1,55 @@
+name: Deploy development enviroment
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+    - main
+    paths:
+      - .github/workflows/dev.yml
+    types: [opened, synchronize, reopened, labeled]
+
+jobs:
+  analyze:
+    name: 'Analyze'
+    runs-on: ubuntu-24.04
+    environment: development
+    defaults:
+      run:
+        working-directory: app    
+    outputs:
+      short_sha: ${{ steps.shorten_sha.outputs.short_sha }}
+      image_tag: ${{ steps.image_info.outputs.image_tag }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Node 22
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Clean install modules
+      run: npm ci
+    
+    - name: Unit Testing and Code Coverage
+      run: |-
+        npm run test:cov
+        
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Shorten commit SHA
+      id: shorten_sha
+      run: |
+        SHORTEN_SHA=$(echo "${{ github.head_ref }}" | sha256sum | cut -c 1-5)
+        echo "short_sha=$SHORTEN_SHA" >> $GITHUB_OUTPUT
+
+    - name: Setting image info
+      id: image_info
+      run: |
+        echo "image_tag=devsu-test-nodejs-dev-${{ steps.shorten_sha.outputs.short_sha }}" >> $GITHUB_OUTPUT
