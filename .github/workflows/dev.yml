@@ -143,6 +143,13 @@ jobs:
             --set image.tag=1.1 \
             --set service.port=8000 \
             --set resources.enabled=true \
+            --set ingress.enabled=true \
+            --set ingress.className=gce \
+            --set ingress.annotations."kubernetes\.io/ingress\.class"="gce" \
+            --set ingress.annotations."kubernetes\.io/ingress\.global-static-ip-name"="static-ip-test-k8s" \
+            --set ingress.hosts[0].host='${{ secrets.DOMAIN }}' \
+            --set ingress.hosts[0].paths[0].path="/" \
+            --set ingress.hosts[0].paths[0].pathType="Prefix"
             --wait-for-jobs \
             --atomic \
             --force \
