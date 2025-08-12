@@ -130,7 +130,7 @@ jobs:
       - name: Clone repo
         run: |
           git clone --branch test https://github.com/FranciscoBodden/devsu-test-ci-cd.git
-          cd devsu-test-ci-cd
+          cd devsu-test-ci-cd/app/helmapp
           helm dependency update
   
       - name: Deploy Helm chart
