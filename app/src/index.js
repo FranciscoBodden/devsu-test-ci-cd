@@ -8,7 +8,9 @@ dotenv.config()
 const app = express()
 const PORT = process.env.PORT || 8000
 
-sequelize.sync({ force: true }).then(() => console.log('db is ready'))
+if (process.env.NODE_ENV !== 'test') {
+    sequelize.sync({ force: true }).then(() => console.log('db is ready'))
+}  
 
 app.use(express.json())
 app.use('/api/users', usersRouter)
