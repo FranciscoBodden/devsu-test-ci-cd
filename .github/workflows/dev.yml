@@ -102,6 +102,11 @@ jobs:
         with:
           project_id: ${{ secrets.PROJECT_ID }}
 
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          gcloud components install gke-gcloud-auth-plugin -q
+  
+
       - name: Get GKE credentials
         run: |
           gcloud container clusters get-credentials ${{ secrets.CLUSTER }} \
