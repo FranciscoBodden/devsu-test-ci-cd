@@ -85,7 +85,7 @@ jobs:
         cache-from: type=gha
         cache-to:  type=gha,mode=max
 
-  get-nodes:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -118,6 +118,34 @@ jobs:
         with:
           version: 'latest'
 
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'latest'
+
       - name: Get nodes
         run: |
           kubectl get nodes
+
+      - name: Clone repo
+        run: |
+          git clone --branch test https://github.com/FranciscoBodden/devsu-test-ci-cd.git
+          cd devsu-test-ci-cd
+          helm dependency update
+  
+      - name: Deploy Helm chart
+        run: |
+          cd devsu-test-ci-cd/app/helmapp
+          helm upgrade --install "app" . \
+            --namespace test \
+            --create-namespace \
+            --set image.repository=kerdockert/app \
+            --set image.tag=1.1 \
+            --set service.port=8000 \
+            --set resources.enabled=true \
+            --wait-for-jobs \
+            --atomic \
+            --force \
+            --debug
+        env:
+          USE_GKE_GCLOUD_AUTH_PLUGIN: "False"
