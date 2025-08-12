@@ -84,3 +84,43 @@ jobs:
         tags: kerdockert/app:1.1
         cache-from: type=gha
         cache-to:  type=gha,mode=max
+
+  deploy-k8s:
+    name: Deploy on K8s cluster
+    needs: [build-image,test]
+    env:
+      NAMESPACE: test
+    runs-on: [self-hosted, pys-k8s-arc]
+    environment: development
+    defaults:
+      run:
+        working-directory: app/helmapp
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'no-action') }}
+    outputs:
+      url_check: ${{ steps.deployment_info.outputs.url_check }}
+    steps:
+      - name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v4.5.0
+
+      - name: Create Kubeconfig File
+        run: |
+          mkdir ~/.kube
+          echo '${{ secrets.KUBECONFIG }}' > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Install Helm package release
+        run: |
+          helm upgrade --install "app" . \
+            --namespace ${{ env.NAMESPACE }} \
+            --set nameOverride=${{ env.GITHUB_REPOSITORY_NAME_PART_SLUG }} \
+            --set image.repository=kerdockert/app \
+            --set image.tag=1.1 \
+            --set service.port=8000 \
+            --set ingress.enabled=true \
+            --set ingress.tls[0].secretName='${{ secrets.DOMAIN }}' \
+            --set ingress.tls[0].hosts[0]='${{ steps.deployment_info.outputs.url }}' \
+            --set ingress.hosts[0].host='${{ steps.deployment_info.outputs.url }}' \
+            --set ingress.hosts[0].paths[0].path='/' \
+            --set ingress.hosts[0].paths[0].pathType='Prefix' \
+            --set resources.enabled=true \
+            --install --wait-for-jobs --atomic --force --debug
