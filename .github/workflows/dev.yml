@@ -1,4 +1,4 @@
-name: Deploy development enviroment
+name: Deploy dev enviroment
 on:
   workflow_dispatch:
   pull_request:
@@ -9,22 +9,17 @@ on:
     types: [opened, synchronize, reopened, labeled]
 
 jobs:
-  analyze:
+  test:
     name: 'Analyze'
     runs-on: ubuntu-24.04
     environment: development
     defaults:
       run:
-        working-directory: app    
-    outputs:
-      short_sha: ${{ steps.shorten_sha.outputs.short_sha }}
-      image_tag: ${{ steps.image_info.outputs.image_tag }}
+        working-directory: app
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
 
     - name: Set up Node 22
       uses: actions/setup-node@v4
@@ -36,20 +31,131 @@ jobs:
     
     - name: Unit Testing and Code Coverage
       run: |-
-        npm run test:cov
+        npm run test
+        npm run coverage
         
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
 
+  build-image:
+    name: Build App Image
+    needs: [test]
+    runs-on: ubuntu-22.04
+    outputs:
+      image_tag: ${{ steps.pull_request_id.outputs.image_tag }}
+    steps:
+    - name: Inject slug/short variables
+      uses: rlespinasse/github-slug-action@v4.5.0
+
+    - name: Checkout
+      uses: actions/checkout@v4.1.1
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
     - name: Shorten commit SHA
-      id: shorten_sha
+      id: pull_request_id
       run: |
         SHORTEN_SHA=$(echo "${{ github.head_ref }}" | sha256sum | cut -c 1-5)
-        echo "short_sha=$SHORTEN_SHA" >> $GITHUB_OUTPUT
+        echo "image_tag=$SHORTEN_SHA" >> $GITHUB_OUTPUT
 
-    - name: Setting image info
-      id: image_info
-      run: |
-        echo "image_tag=devsu-test-nodejs-dev-${{ steps.shorten_sha.outputs.short_sha }}" >> $GITHUB_OUTPUT
+    - name: Login to Registry
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.REGISTRY_USERNAME }}
+        password: ${{ secrets.REGISTRY_PASSWORD }}
+
+    - name: Build and push
+      uses: docker/build-push-action@v5
+      with:
+        context: app
+        push: true
+        tags: kerdockert/app:${{ steps.pull_request_id.outputs.image_tag }}
+        cache-from: type=gha
+        cache-to:  type=gha,mode=max
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [build-image, test]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.PROJECT_ID }}
+
+      - name: Install gke-gcloud-auth-plugin
+        run: |
+          gcloud components install gke-gcloud-auth-plugin -q
+  
+
+      - name: Get GKE credentials
+        run: |
+          gcloud container clusters get-credentials ${{ secrets.CLUSTER }} \
+            --zone us-central1-a \
+            --project ${{ secrets.PROJECT_ID }}
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'latest'
+
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: 'latest'
+
+      - name: Get nodes
+        run: |
+          kubectl get nodes
+
+      - name: Clone repo
+        run: |
+          git clone --branch test https://github.com/FranciscoBodden/devsu-test-ci-cd.git
+          cd devsu-test-ci-cd/app/helmapp
+          helm dependency update
+  
+      - name: Deploy Helm chart
+        run: |
+          cd devsu-test-ci-cd/app/helmapp
+          helm upgrade --install "app" . \
+            --namespace test \
+            --create-namespace \
+            --set image.repository=kerdockert/app \
+            --set image.tag=${{ needs.build-image.outputs.image_tag }}  \
+            --set service.port=8000 \
+            --set resources.enabled=true \
+            --set autoscaling.enabled=true \
+            --set autoscaling.minReplicas=2 \
+            --set autoscaling.maxReplicas=5 \
+            --set autoscaling.targetCPUUtilizationPercentage=80 \
+            --set service.type=NodePort \
+            --set database.name="./dev.sqlite" \
+            --set database.user="user" \
+            --set database.password="password" \
+            --set database.existingSecret="" \
+            --set ingress.enabled=true \
+            --set ingress.className=gce \
+            --set ingress.annotations."kubernetes\.io/ingress\.class"="gce" \
+            --set ingress.annotations."kubernetes\.io/ingress\.global-static-ip-name"="static-ip-test-k8s" \
+            --set ingress.hosts[0].host='${{ secrets.DOMAIN }}' \
+            --set ingress.hosts[0].paths[0].path="/" \
+            --set ingress.hosts[0].paths[0].pathType="Prefix" \
+            --wait-for-jobs \
+            --atomic \
+            --force \
+            --debug
+        env:
+          USE_GKE_GCLOUD_AUTH_PLUGIN: "False"
