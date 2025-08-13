@@ -44,7 +44,6 @@ jobs:
     needs: [test]
     runs-on: ubuntu-22.04
     outputs:
-      pr_id: ${{ steps.pull_request_id.outputs.pr_id }}
       image_tag: ${{ steps.image_info.outputs.image_tag }}
     steps:
     - name: Inject slug/short variables
@@ -63,12 +62,7 @@ jobs:
       id: pull_request_id
       run: |
         SHORTEN_SHA=$(echo "${{ github.head_ref }}" | sha256sum | cut -c 1-5)
-        echo "pr_id=$SHORTEN_SHA" >> $GITHUB_OUTPUT
-
-    - name: Setting image info
-      id: image_info
-      run: |
-        echo "image_tag=devsu-demo-nodejs-${{ steps.pull_request_id.outputs.pr_id }}" >> $GITHUB_OUTPUT
+        echo "image_tag=$SHORTEN_SHA" >> $GITHUB_OUTPUT
 
     - name: Login to Registry
       uses: docker/login-action@v3
@@ -81,7 +75,7 @@ jobs:
       with:
         context: app
         push: true
-        tags: kerdockert/app:${{ steps.pull_request_id.outputs.pr_id }}
+        tags: kerdockert/app:${{ steps.pull_request_id.outputs.image_tag }}
         cache-from: type=gha
         cache-to:  type=gha,mode=max
 
@@ -140,7 +134,7 @@ jobs:
             --namespace test \
             --create-namespace \
             --set image.repository=kerdockert/app \
-            --set image.tag=1.1 \
+            --set image.tag=${{ needs.build-image.outputs.image_tag }}  \
             --set service.port=8000 \
             --set resources.enabled=true \
             --set autoscaling.enabled=true \
