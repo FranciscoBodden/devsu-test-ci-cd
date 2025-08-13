@@ -44,7 +44,7 @@ jobs:
     needs: [test]
     runs-on: ubuntu-22.04
     outputs:
-      image_tag: ${{ steps.image_info.outputs.image_tag }}
+      image_tag: ${{ steps.pull_request_id.outputs.image_tag }}
     steps:
     - name: Inject slug/short variables
       uses: rlespinasse/github-slug-action@v4.5.0
