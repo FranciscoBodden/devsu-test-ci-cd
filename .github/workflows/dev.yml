@@ -148,6 +148,10 @@ jobs:
             --set autoscaling.maxReplicas=5 \
             --set autoscaling.targetCPUUtilizationPercentage=80 \
             --set service.type=NodePort \
+            --set database.name="./dev.sqlite" \
+            --set database.user="user" \
+            --set database.password="password" \
+            --set database.existingSecret="" \
             --set ingress.enabled=true \
             --set ingress.className=gce \
             --set ingress.annotations."kubernetes\.io/ingress\.class"="gce" \
