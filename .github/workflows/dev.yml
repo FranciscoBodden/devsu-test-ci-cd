@@ -16,7 +16,7 @@ on:
 
 jobs:
   test:
-    name: 'Analyze Code'
+    name: 'Analyze Code and Testing'
     runs-on: ubuntu-24.04
     outputs:
       image_tag: ${{ steps.pull_request_id.outputs.image_tag }}
@@ -63,7 +63,7 @@ jobs:
 
   deploy:
     needs: [build-image, test]
-      uses: ./.github/workflows/deploy.yaml
+      uses: ./.github/workflows/deploy.yml
       with:
         working_directory: app/helmapp
         environment: development
