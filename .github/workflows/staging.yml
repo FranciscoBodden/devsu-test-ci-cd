@@ -1,4 +1,4 @@
-name: Deploy dev enviroment
+name: Deploy staging enviroment
 on:
   workflow_dispatch:
   pull_request:
@@ -12,15 +12,20 @@ on:
       - app/**/helmchart/*
       - app/**/codecov.yml
       - .github/workflows/dev.yml
-    types: [opened, synchronize, reopened, labeled]
+      - .github/workflows/cd-deploy.yml
+      - .github/workflows/ci-build.yml
+      - .github/workflows/cd-clean.yml
+      - .github/workflows/staging.yml
+    types: [closed]
 
 jobs:
   test:
     name: 'Analyze Code and Testing'
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-24.04
     outputs:
-      image_tag: ${{ steps.pull_request_id.outputs.image_tag }}
-    environment: development
+      image_tag: ${{ steps.image_info.outputs.image_tag }}
+    environment: staging
     defaults:
       run:
         working-directory: app
@@ -46,26 +51,27 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
 
-    - name: Shorten commit SHA
-      id: pull_request_id
+    - name: Setting image info
+      id: image_info
       run: |
-        SHORTEN_SHA=$(echo "${{ github.head_ref }}" | sha256sum | cut -c 1-5)
-        echo "image_tag=$SHORTEN_SHA" >> $GITHUB_OUTPUT
+        echo "image_tag=latest" >> $GITHUB_OUTPUT
 
   build-image:
+    if: github.event.pull_request.merged == true
     needs: [test]
     uses: ./.github/workflows/ci-build.yml
     with:
       working_directory: app
-      environment: development
+      environment: staging
       image_tag: ${{ needs.test.outputs.image_tag }}
     secrets: inherit
 
   deploy:
+    if: github.event.pull_request.merged == true
     needs: [build-image, test]
     uses: ./.github/workflows/cd-deploy.yml
     with:
       working_directory: app/helmapp
-      environment: development
+      environment: staging
       image_tag: ${{ needs.test.outputs.image_tag }}
     secrets: inherit
