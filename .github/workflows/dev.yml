@@ -112,11 +112,11 @@ jobs:
       - name: Deploy Helm chart
         run: |
           cd devsu-test-ci-cd/app/helmapp
-          helm upgrade --install "app-k8s-${{ needs.build-image.outputs.image_tag }}" . \
+          helm upgrade --install "app-k8s-${{ needs.test.outputs.image_tag }}" . \
             --namespace test \
             --create-namespace \
             --set image.repository=kerdockert/app \
-            --set image.tag=${{ needs.build-image.outputs.image_tag }}  \
+            --set image.tag=${{ needs.test.outputs.image_tag }}  \
             --set service.port=8000 \
             --set resources.enabled=true \
             --set autoscaling.enabled=true \
