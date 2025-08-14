@@ -63,7 +63,7 @@ jobs:
 
   deploy:
     needs: [build-image, test]
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/workflows/cd/deploy.yml
     with:
       working_directory: app/helmapp
       environment: development
