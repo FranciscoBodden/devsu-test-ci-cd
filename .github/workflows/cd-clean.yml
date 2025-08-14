@@ -12,7 +12,7 @@ on:
       - app/**/helmchart/*
       - app/**/codecov.yml
       - .github/workflows/dev.yml
-      - .github/workflows/clean.yml
+      - .github/workflows/cd-clean.yml
     types: [closed]
 
 jobs:
