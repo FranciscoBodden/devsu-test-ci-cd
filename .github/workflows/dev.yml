@@ -54,7 +54,7 @@ jobs:
 
   build-image:
     needs: [test]
-    uses: ./.github/workflows/build.yaml
+    uses: ./.github/workflows/build.yml
     with:
       working_directory: app
       environment: development
