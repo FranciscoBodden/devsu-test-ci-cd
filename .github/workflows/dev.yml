@@ -63,10 +63,10 @@ jobs:
 
   deploy:
     needs: [build-image, test]
-      uses: ./.github/workflows/deploy.yml
-      with:
-        working_directory: app/helmapp
-        environment: development
-        image_tag: ${{ needs.test.outputs.image_tag }}
-        service_type: NodePort
-      secrets: inherit
+    uses: ./.github/workflows/deploy.yml
+    with:
+      working_directory: app/helmapp
+      environment: development
+      image_tag: ${{ needs.test.outputs.image_tag }}
+      service_type: NodePort
+    secrets: inherit
