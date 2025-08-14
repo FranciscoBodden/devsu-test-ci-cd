@@ -5,6 +5,12 @@ on:
     branches:
     - main
     paths:
+      - app/**/*.js
+      - app/**/package.json
+      - app/**/package.lock.json
+      - app/**/Dockerfile
+      - app/**/helmchart/*
+      - app/**/codecov.yml
       - .github/workflows/dev.yml
     types: [opened, synchronize, reopened, labeled]
 
@@ -130,7 +136,7 @@ jobs:
       - name: Deploy Helm chart
         run: |
           cd devsu-test-ci-cd/app/helmapp
-          helm upgrade --install "app" . \
+          helm upgrade --install "app-k8s-${{ needs.build-image.outputs.image_tag }}" . \
             --namespace test \
             --create-namespace \
             --set image.repository=kerdockert/app \

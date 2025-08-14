@@ -1,0 +1,60 @@
+name: Clean development enviroment
+on:
+  workflow_dispatch:
+  pull_request:
+    branches:
+    - main
+    paths:
+      - app/**/*.js
+      - app/**/package.json
+      - app/**/package.lock.json
+      - app/**/Dockerfile
+      - app/**/helmchart/*
+      - app/**/codecov.yml
+      - .github/workflows/dev.yml
+      - .github/workflows/clean.yml
+    types: [closed]
+
+jobs:
+  remove-deploy:
+    name: Removes app on GKE
+    runs-on: ubuntu-24.04
+    environment: development
+    defaults:
+      run:
+        working-directory: app/helmapp
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+
+    - name: Pull Request ID
+      id: pull_request_id
+      run: |
+        SHORTEN_SHA=$(echo "${{ github.head_ref }}" | sha256sum | cut -c 1-5)
+        echo "image_tag=$SHORTEN_SHA" >> $GITHUB_OUTPUT
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v2
+      with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+
+    - name: Set up gcloud CLI
+      uses: google-github-actions/setup-gcloud@v2
+      with:
+          project_id: ${{ secrets.PROJECT_ID }}
+
+    - name: Install gke-gcloud-auth-plugin
+      run: |
+          gcloud components install gke-gcloud-auth-plugin -q
+
+    - name: Get GKE credentials
+      run: |
+          gcloud container clusters get-credentials ${{ secrets.CLUSTER }} \
+          --zone us-central1-a \
+          --project ${{ secrets.PROJECT_ID }}
+
+    - name: Uninstall helm release
+      run: |
+        helm uninstall app-k8s-${{ steps.pull_request_id.outputs.image_tag }} --namespace test --wait
