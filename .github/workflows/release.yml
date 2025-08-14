@@ -1,26 +1,16 @@
-name: Deploy dev enviroment
+name: Deploy production enviroment
 on:
   workflow_dispatch:
-  pull_request:
-    branches:
-    - main
-    paths:
-      - app/**/*.js
-      - app/**/package.json
-      - app/**/package.lock.json
-      - app/**/Dockerfile
-      - app/**/helmchart/*
-      - app/**/codecov.yml
-      - .github/workflows/dev.yml
-    types: [opened, synchronize, reopened, labeled]
+  release:
+    types: [published]
 
 jobs:
   test:
     name: 'Analyze Code and Testing'
     runs-on: ubuntu-24.04
     outputs:
-      image_tag: ${{ steps.pull_request_id.outputs.image_tag }}
-    environment: development
+      image_tag: ${{ steps.image_info.outputs.image_tag }}
+    environment: production
     defaults:
       run:
         working-directory: app
@@ -46,18 +36,17 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
 
-    - name: Shorten commit SHA
-      id: pull_request_id
+    - name: Setting image info
+      id: image_info
       run: |
-        SHORTEN_SHA=$(echo "${{ github.head_ref }}" | sha256sum | cut -c 1-5)
-        echo "image_tag=$SHORTEN_SHA" >> $GITHUB_OUTPUT
+        echo "image_tag=${{ github.event.release.tag_name }}" >> $GITHUB_OUTPUT
 
   build-image:
     needs: [test]
     uses: ./.github/workflows/ci-build.yml
     with:
       working_directory: app
-      environment: development
+      environment: production
       image_tag: ${{ needs.test.outputs.image_tag }}
     secrets: inherit
 
@@ -66,6 +55,6 @@ jobs:
     uses: ./.github/workflows/cd-deploy.yml
     with:
       working_directory: app/helmapp
-      environment: development
+      environment: production
       image_tag: ${{ needs.test.outputs.image_tag }}
     secrets: inherit
