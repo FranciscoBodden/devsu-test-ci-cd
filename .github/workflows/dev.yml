@@ -12,6 +12,7 @@ on:
       - app/**/helmchart/*
       - app/**/codecov.yml
       - .github/workflows/dev.yml
+      - .github/workflows/cd-deploy.yml
     types: [opened, synchronize, reopened, labeled]
 
 jobs:
@@ -68,4 +69,5 @@ jobs:
       working_directory: app/helmapp
       environment: development
       image_tag: ${{ needs.test.outputs.image_tag }}
+      stage_name: ${{ needs.test.outputs.image_tag }}
     secrets: inherit

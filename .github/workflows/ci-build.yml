@@ -50,3 +50,19 @@ jobs:
           tags: kerdockert/app:${{ inputs.image_tag }}
           cache-from: type=gha
           cache-to:  type=gha,mode=max
+        
+      - name: Scan image with Trivy
+        id: scan-image
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: docker.io/kerdockert/app:${{ inputs.image_tag }}
+          format: "sarif"
+          severity: "CRITICAL,HIGH"
+          vuln-type: 'os,library'
+          output: 'trivy-results.sarif'
+      
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+        continue-on-error: true   

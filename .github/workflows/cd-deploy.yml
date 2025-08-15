@@ -12,6 +12,9 @@ on:
         required: false
         type: string
         default: staging
+      stage_name: 
+        required: false
+        type: string
 
 jobs:
   deploy:
@@ -83,7 +86,10 @@ jobs:
           --set ingress.className=gce \
           --set ingress.annotations."kubernetes\.io/ingress\.class"="gce" \
           --set ingress.annotations."kubernetes\.io/ingress\.global-static-ip-name"="static-ip-test-k8s" \
-          --set ingress.hosts[0].host='${{ secrets.DOMAIN }}' \
+          --set ingress.annotations."networking\.gke\.io/managed-certificates"="app-managed-cert-${{ inputs.image_tag }}" \
+          --set cert.name=app-managed-cert-${{ inputs.image_tag }} \
+          --set cert.domains="{${{ inputs.image_tag }}.${{ secrets.DOMAIN }}}" \
+          --set ingress.hosts[0].host='${{ inputs.stage_name }}.${{ secrets.DOMAIN }}' \
           --set ingress.hosts[0].paths[0].path="/" \
           --set ingress.hosts[0].paths[0].pathType="Prefix" \
           --wait-for-jobs \
