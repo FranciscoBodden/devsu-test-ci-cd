@@ -78,6 +78,11 @@ ingress:
   #  - secretName: chart-example-tls
   #    hosts:
   #      - chart-example.local
+# values.yaml
+cert:
+  name: app-managed-cert
+  domains:
+    - test2.prueba-k8s-test.ip-ddns.com
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
