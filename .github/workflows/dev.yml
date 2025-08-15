@@ -12,6 +12,7 @@ on:
       - app/**/helmchart/*
       - app/**/codecov.yml
       - .github/workflows/dev.yml
+      - .github/workflows/cd-deploy.yml
     types: [opened, synchronize, reopened, labeled]
 
 jobs:
