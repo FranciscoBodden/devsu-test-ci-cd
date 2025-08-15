@@ -57,4 +57,5 @@ jobs:
       working_directory: app/helmapp
       environment: production
       image_tag: ${{ needs.test.outputs.image_tag }}
+      stage_name: prod
     secrets: inherit
