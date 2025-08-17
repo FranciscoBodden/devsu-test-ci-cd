@@ -15,7 +15,7 @@ devsu-test-ci-cd/
 ├── app/
 │   ├── codecov.yml
 │   ├── coverage/
-│   │   └── ... (archivos de cobertura )
+│   │   └── ... (archivos de cobertura)
 │   ├── dev.sqlite
 │   ├── Dockerfile
 │   ├── helmapp/
