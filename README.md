@@ -138,7 +138,7 @@ Obtener todos los Usuarios - GET
 
 ## Mejoras a Futuro:
 
-1. Crear un volumen para esta base de datos para que sea permanente en caso de seguir con una base datos sqlite, si se usa base como MySQL crea un job para crear un base datos aislada para cada pull request creado tenga data con migracion y seeeder independiente para que se puede hacer prueba de QA asildas.
+1. Crear un volumen para esta base de datos para que sea permanente en caso de seguir con una base datos sqlite, si se usa base como MySQL crea un job para crear un base datos aislada para cada pull request creado tenga data con migracion y seeeder independiente para que se puede hacer prueba de QA aislda.
 
 2. Usar gestor de Secret para los secret.
 
