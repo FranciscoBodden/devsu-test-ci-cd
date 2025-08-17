@@ -33,3 +33,4 @@ yarn.lock
 *.test.js
 *.spec.js
 *.md
+adjuntos/

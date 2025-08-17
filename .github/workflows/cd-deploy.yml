@@ -1,4 +1,4 @@
-name: Deploy app to GKE
+name: Deploy app to GKE 
 on:
   workflow_call:
     inputs:
