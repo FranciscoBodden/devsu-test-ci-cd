@@ -1,5 +1,7 @@
 ## DevOps Prueba 
 
+[![Image](adjuntos/imagenes/DevOps.png "pipeline")](adjuntos/imagenes/DevOps.png)
+
 Este repositorio tiene la siguiente estructura para la prueba tecnica de DevOps:
 
 ```bash
@@ -115,3 +117,30 @@ Se uso Helm como plantilla para el despligar en Kubernetes en GKE de acuerdo al 
 ## Certificado SSL
 
 Para la gestion de los certificado SSL se uso ManagedCertificate para que se ejecute en el Ingress del Cluster de GKE
+
+[![Image](adjuntos/imagenes/certificado-ssl.png "pipeline")](adjuntos/imagenes/certificado-ssl.png)
+
+staging: https://latest.prueba-k8s-test.ip-ddns.com/up
+
+producion: https://prod.prueba-k8s-test.ip-ddns.com/up
+
+
+## Pruebas
+
+Crear Usuario - POST
+
+[![Image](adjuntos/imagenes/prueba-post.png "pipeline")](adjuntos/imagenes/prueba-post.png)
+
+Obtener todos los Usuarios - GET
+
+[![Image](adjuntos/imagenes/prueba-get.png "pipeline")](adjuntos/imagenes/prueba-get.png)
+
+## Mejoras a Futuro:
+
+1. Crear un volumen para esta base de datos para que sea permanente en caso de seguir con una base datos sqlite, si se usa base como MySQL crea un job para crear un base datos aislada para cada pull request creado tenga data con migracion y seeeder independiente para que se puede hacer prueba de QA asildas.
+
+2. Usar gestor de Secret para los secret.
+
+3. Implentar Sentry o cualquier herramienta de monitoreo de errores en la aplicacion.
+
+4. Agregar un coletor de logs en el Cluster de Kubernetes.
