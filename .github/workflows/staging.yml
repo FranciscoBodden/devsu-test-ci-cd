@@ -18,6 +18,11 @@ on:
       - .github/workflows/staging.yml
     types: [closed]
 
+permissions:
+  id-token: write
+  contents: write
+  pull-requests: write
+
 jobs:
   test:
     name: 'Analyze Code and Testing'
