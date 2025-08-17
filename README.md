@@ -3,6 +3,7 @@
 Este repositorio tiene la siguiente estructura para la prueba tecnica de DevOps:
 
 devsu-test-ci-cd/
+
 ├── .github/
 │   └── workflows/
 │       ├── dev.yml            
@@ -33,6 +34,7 @@ devsu-test-ci-cd/
     ├── main.tf
     ├── variables.tf
     └── outputs.tf
+
 
 ## Requisitos:
 
