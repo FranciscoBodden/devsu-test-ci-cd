@@ -2,8 +2,8 @@
 
 Este repositorio tiene la siguiente estructura para la prueba tecnica de DevOps:
 
-devsu-test-ci-cd/
-|
+```bash
+.
 ├── .github/
 │   └── workflows/
 │       ├── dev.yml
@@ -14,24 +14,26 @@ devsu-test-ci-cd/
 │       ├── cd-deploy.yml
 │       ├── cd-infodeploy.yml
 ├── app/
+│   ├── codecov.yml
+│   ├── coverage/
+│   │   └── ... (archivos de cobertura)
+│   ├── dev.sqlite
+│   ├── Dockerfile
+│   ├── helmapp/
+│   │   └── ... (archivos Helm)
+│   ├── node_modules/
+│   │   └── ... (módulos de Node.js instalados)
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── README.md
+│   └── src/
+│       ├── index.js
+│       ├── app.js
+│       └── ...(otros archivos fuente del proyecto)
 └── iac-gke/
     ├── main.tf
     ├── variables.tf
     └── outputs.tf
-```bash
-$ tree
-.
-├── dir1
-│   ├── file11.ext
-│   └── file12.ext
-├── dir2
-│   ├── file21.ext
-│   ├── file22.ext
-│   └── file23.ext
-├── dir3
-├── file_in_root.ext
-└── README.md
-
 ```
 
 ## Requisitos:
