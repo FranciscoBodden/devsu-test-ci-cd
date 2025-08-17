@@ -88,7 +88,7 @@ jobs:
           --set ingress.annotations."networking\.gke\.io/managed-certificates"="app-managed-cert-${{ inputs.image_tag }}" \
           --set ingress.annotations."external-dns\.alpha\.kubernetes\.io/hostname"="${{ inputs.stage_name }}.${{ secrets.DOMAIN }}." \
           --set cert.name=app-managed-cert-${{ inputs.image_tag }} \
-          --set cert.domains="{${{ inputs.image_tag }}.${{ secrets.DOMAIN }}}" \
+          --set cert.domains="{${{ inputs.stage_name }}.${{ secrets.DOMAIN }}}" \
           --set ingress.hosts[0].host='${{ inputs.stage_name }}.${{ secrets.DOMAIN }}' \
           --set ingress.hosts[0].paths[0].path="/" \
           --set ingress.hosts[0].paths[0].pathType="Prefix" \
