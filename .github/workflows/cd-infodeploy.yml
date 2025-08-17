@@ -14,7 +14,7 @@ on:
 
 jobs:
   info-deploy:
-    name: Executes post-deployment tasks
+    name: Executes info-deployment
     runs-on: ubuntu-24.04
     environment: ${{ inputs.environment }}
     steps:
@@ -25,7 +25,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             ** 🚀 New ${{ inputs.environment }} URL for app-k8s-${{ inputs.stage_name }} 🚀:**
-             🔗 Ingress URL: ${{ inputs.stage_name }}.${{ secrets.DOMAIN }}/up
+             🔗 Ingress URL: ${{ inputs.stage_name }}.prueba-k8s-test.ip-ddns.com/up
 
              > This URL is temporary and will only be available while the container instance is running. If the instance is deleted, the URL will no longer be accessible.
           reactions: rocket
