@@ -41,6 +41,7 @@ Este repositorio tiene la siguiente estructura para la prueba tecnica de DevOps:
 ## Requisitos:
 
 Git: Sistema de control de versiones para gestionar cambios en el código.
+
 Terraform: Para gestionar la infraestructura como codigo.
 
 ## IAC:
