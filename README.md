@@ -3,6 +3,7 @@
 Este repositorio tiene la siguiente estructura para la prueba tecnica de DevOps:
 
 ```bash
+$ tree
 .
 ├── .github/
 │   └── workflows/
