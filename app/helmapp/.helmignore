@@ -21,3 +21,15 @@
 .idea/
 *.tmproj
 .vscode/
+node_modules/
+coverage/
+*.sqlite
+*.tar.gz
+*.zip
+*.tar
+*.log
+package-lock.json
+yarn.lock
+*.test.js
+*.spec.js
+*.md
