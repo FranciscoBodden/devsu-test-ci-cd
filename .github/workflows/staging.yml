@@ -76,3 +76,11 @@ jobs:
       image_tag: ${{ needs.test.outputs.image_tag }}
       stage_name: ${{ needs.test.outputs.image_tag }}
     secrets: inherit
+
+  info-deploy:
+    needs: [build-image, test,deploy]
+    uses: ./.github/workflows/cd-infodeploy.yml
+    with:
+      environment: staging
+      stage_name: ${{ needs.test.outputs.image_tag }}
+    secrets: inherit
