@@ -8,8 +8,8 @@ devsu-test-ci-cd/
 │       ├── dev.yml             # Despliegue automático a desarollo
 │       ├── staging.yml         # Despliegue automático a staging
 │       ├── release.yml         # Despliegue automático a producion
-│       ├── ci-build.yml        # --- Continuous Integration Workflows --- Build de la imagen del contenedor
-│       ├── cd-clen.yml         # --- Continuous Delivery Workflows --- # Limpieza del despliegue
+│       ├── ci-build.yml        #Build de la imagen del contenedor
+│       ├── cd-clen.yml         #Limpieza del despliegue
 │       ├── cd-deploy.yml       #       Despliegue automático         
 │       ├── cd-infodeploy.yml   # Información o reporte del despliegue
 ├── app/
