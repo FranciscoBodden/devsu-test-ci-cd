@@ -3,13 +3,10 @@
 Este repositorio tiene la siguiente estructura para la prueba tecnica de DevOps:
 
 devsu-test-ci-cd/
-
+|
 ├── .github/
-
 │   └── workflows/
-
 │       ├── dev.yml
-
 │       ├── staging.yml
 │       ├── release.yml
 │       ├── ci-build.yml
@@ -17,22 +14,6 @@ devsu-test-ci-cd/
 │       ├── cd-deploy.yml
 │       ├── cd-infodeploy.yml
 ├── app/
-│   ├── codecov.yml
-│   ├── coverage/
-│   │   └── ... (archivos de cobertura)
-│   ├── dev.sqlite
-│   ├── Dockerfile
-│   ├── helmapp/
-│   │   └── ... (archivos Helm)
-│   ├── node_modules/
-│   │   └── ... (módulos de Node.js instalados)
-│   ├── package-lock.json
-│   ├── package.json
-│   ├── README.md
-│   └── src/
-│       ├── index.js
-│       ├── app.js
-│       └── ...(otros archivos fuente del proyecto)
 └── iac-gke/
     ├── main.tf
     ├── variables.tf
