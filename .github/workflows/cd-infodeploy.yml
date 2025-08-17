@@ -1,0 +1,31 @@
+name: Info Deployment
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: false
+        type: string
+        default: staging
+      stage_name: 
+        required: false
+        type: string
+        default: ${{ github.event.repository.name }}
+      
+
+jobs:
+  info-deploy:
+    name: Executes post-deployment tasks
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Comment PR with new URL
+        if: ${{ success() && inputs.environment != 'production' }}
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ** 🚀 New ${{ inputs.environment }} URL for app-k8s-${{ inputs.stage_name }} 🚀:**
+             🔗 Ingress URL: ${{ inputs.stage_name }}.${{ secrets.DOMAIN }}/up
+
+             > This URL is temporary and will only be available while the container instance is running. If the instance is deleted, the URL will no longer be accessible.
+          reactions: rocket
