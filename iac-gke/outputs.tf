@@ -1,7 +1,7 @@
-output "kubernetes_cluster_name" {
-  value = google_container_cluster.primary.name
+output "cluster_name" {
+  value = module.gke.cluster_name
 }
 
-output "kubernetes_cluster_endpoint" {
-  value = google_container_cluster.primary.endpoint
+output "cluster_endpoint" {
+  value = module.gke.cluster_endpoint
 }

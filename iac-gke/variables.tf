@@ -1,16 +1,15 @@
 variable "project_id" {
-  description = "ID del proyecto de GCP"
-  type        = string
+  type = string
 }
 
 variable "zone" {
-  description = "Zona para GKE"
-  type        = string
-  default     = "us-central1-a"
+  type = string
 }
 
 variable "cluster_name" {
-  description = "Nombre del cluster para GKE"
-  type        = string
-  default     = "gke-cluster"
+  type = string
+}
+
+variable "credentials_file" {
+  type = string
 }
