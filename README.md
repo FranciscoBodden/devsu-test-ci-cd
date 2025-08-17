@@ -18,6 +18,7 @@ devsu-test-ci-cd/
     ├── main.tf
     ├── variables.tf
     └── outputs.tf
+```bash
 $ tree
 .
 ├── dir1
@@ -30,6 +31,8 @@ $ tree
 ├── dir3
 ├── file_in_root.ext
 └── README.md
+
+```
 
 ## Requisitos:
 
