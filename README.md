@@ -5,8 +5,11 @@ Este repositorio tiene la siguiente estructura para la prueba tecnica de DevOps:
 devsu-test-ci-cd/
 
 ├── .github/
+
 │   └── workflows/
-│       ├── dev.yml            
+
+│       ├── dev.yml
+
 │       ├── staging.yml
 │       ├── release.yml
 │       ├── ci-build.yml
