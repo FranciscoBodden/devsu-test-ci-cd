@@ -52,6 +52,7 @@ La creacion del Cluster de GKE se hizo con terraform
    ```bash
    git clone https://github.com/FranciscoBodden/devsu-test-ci-cd.git
    cd devsu-test-ci-cd
+   ```
 
 ** Descargar archivo de conecion con solo permiso necesario **
 
@@ -70,6 +71,7 @@ Modificar el archivo devsu-test-ci-cd/aic-gke/main.tf en la linea 5 esto:   cred
     terraform init
     terraform plan
     terraform apply
+    ```
 
 ## CI/CD
 
